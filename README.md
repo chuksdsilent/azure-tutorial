@@ -264,3 +264,100 @@ There are 4 Azure networking services
 - limits of 3000 subnets
 
 ``` Pratical videos starts at 006```
+
+### Network Security Group
+- A gate keeper for subnets
+- Defines who can connect in and out of subnets
+- look at it as a mini firewall
+- it is free
+
+### How NSG Work?
+- Looks at 5 tuples
+    - Source (Where did the connection come from)
+    - Source Port (The port the source is using)
+    - Destination (Where does the connection request goes)
+    -  Destination (To which port does it want to connect)
+    - Protocol (TCP, UDP, Both)
+- This is called Security Rule
+- NSG is automatically created and attached to every newly created VM's network interface
+- NSG by default opens RDP on windows and SSH on linux to anyone
+- Must be handled after creation.
+
+
+### Network Peering
+- Sometimes you need to place some resources in seperate VNet to enhance security. Eg. Seperate system, System layer(FE, BE), Database
+- Reason so we don't place resources that does not require public acces to be placed in VNet that has public accesss
+- Network Peering is when we allow one VNet to interact with each other
+- make sure address spaces are not overlapped otherwise we can not peer the VMs
+- use NSG for protection
+- Peering can work accress region
+- Network peering is not free
+
+``` Pratical videos starts at 15```
+
+### Network Watcher
+- This is used monitor the VNets and subnets
+
+### Secure VM Access
+- Leaving public IP open is always a risk we want to avoid
+- The larger the attack surface - the greater the risk
+- We want to minimize it as much as possible.
+- Not related to the design but important
+
+### How to secure VM 
+- JIT Access
+- VPN
+- Jump Box
+- Bastion
+
+### Just In Time Access(JIT)
+- Opens the port for access on demand, and automatically closes it. 
+- Closed the rest of the time
+- Can be configured from VM page in the portal
+- Required Security Center Liscense Upgrade 
+
+``` Pratical videos starts at 19@40mins```
+
+### Virtual Private Network
+- A secure tunnel to the VNet
+- Can be configures so that no one can connect to the VNet.
+- Requires VPN software and liscense (not part of Azure)
+
+### Jump Box
+- Place another VM in the VNet
+- Allow access ONLY to this VNet
+- When need access to one of the VMs - connect to one and from there connect to others
+- Only one port is open
+
+###  Bastion Host
+- Web based connection to VM
+- No open port is required
+- Simple and Secure
+- Cost - 140$/month
+
+``` Pratical videos starts at 20```
+### Bastion Downside
+- it requires portal access
+- Cost
+
+### Service Endppoint
+- Alot of managed services exposes public IP. i.e, Azure SQL Server, App Service e.t.c
+- Sometimes these resources are accessed from only resources in the cloud. e.g, database
+- The pose a security risk
+- Service Endpoint solves these security risk
+- Creates a route from the VNet to the resources
+- Traffic never leaves Azure backbone
+    - Although the resource still has a public IP
+- Enable Service Endpoint on the subnet from which you want to access
+- On the resource, set the subnet as the source of traffic
+
+### Private Link
+- It extends managed service into the VNet
+- Traffic never leaves the VNet 
+- Access to the internet is blocked
+- It is not free
+- VM talks to the App Service via  private IP
+
+### Difference between Service Endpoint and Private link
+- Service Endpoint is a legacy solution (It is an old solution) while Private link is a newer version of service endpoint. 
+- Private Link support more resources than Service Endpoint.
