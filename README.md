@@ -361,3 +361,139 @@ There are 4 Azure networking services
 ### Difference between Service Endpoint and Private link
 - Service Endpoint is a legacy solution (It is an old solution) while Private link is a newer version of service endpoint. 
 - Private Link support more resources than Service Endpoint.
+- Service Endpoint is free while Private Link is not free
+- Service Endpoint is simpler than Private Link
+- On-Prem Connectivity  of service endpoint is complex than Private Link
+
+
+### App Service VNet Integration
+- Allows access from app service to resources within VNet so that the resources should not be exposed to the public
+- Extremely useful when App Service needs access to a VM with internal resources
+- Supports same-region VNets. For VNets in other region a gateway is required
+
+### Difference between Service Endpoint/Private Link and VNet Integration
+- SE/PL allow traffic from a resource(eg Vm) to a managed resource such as app service while VNet Integration allows traffic from managed resource(App Service) to VNet.
+
+``` Practical video start at 24@02mins ```
+
+### App Service Access
+- Similar to NSG - but for App service
+- Restricts traffic to App Service
+- By default - all inbound traffic is allowed (in relevant ports)
+- We can restrict the inbound traffic to allowed IPs/VNets/Service Tag
+- Main use cases
+    - Backend App Service that should be accessed from frontend/VM only
+    - Frontend App Service that should be accessed from load balancer only.
+    - Open App Service to customer only to access it. 
+
+### App Service Environment
+- App Service Environment
+- Special type of app service deployed directly to a dedicated VNet
+- VNet can be configured like any other VNet - Subnets, NSGs etc
+- Created on dedicated Hardware 
+- Very Expensive
+- Major Use Cases
+    - Elevated security
+    - Very high scale environement
+
+### Load Balancer
+- It distributes the loads and checks health of VMs
+- When VM is not healthy - No traffic is directed to it. 
+- Can work with VMs or scale set
+- can be public or private
+- Operates at layer 4 of OSI model 
+
+### Load Balancer Distribution Algorithm
+- Based on 5 tuple has:
+    - Source IP
+    - Source port
+    - Destination IP
+    - Destination Port
+    - Protocol type
+
+### 2 Types of Load Balancer
+- Basic
+    - No Redundancy - when a load balancer is down we are left with none
+    - Open by default
+    - support up to 300 instances
+    - No SLA
+    - Free
+- Standard
+    - Redundant - when a load balancer is down no one spins up automatically
+    - Secured by default
+    - support up to 1000 instances
+    - 99.9% SLA
+    - No Free
+
+### 4 main Load Balancer Configuration
+- Frontend IP Configuration
+    - Public IP exposed by the load balancer
+- Backend Pool
+    - VMs that are connected to the load balancer
+- Health Probes
+    - Checks the health of the VM
+        - It runs in intervals
+        - Can run on TCP, HTTP, HTTPS,
+        - Configurable unhealthy threashold - How many times a check should fail before marking it down(Default is 2)
+        - Runs on the VM's Host
+        - Allowed by default in NS
+        - Originate from the same IP as the host VM
+- Load Balancing rules
+    - Rules connecting the frontend IP to the backend pools
+
+### When to use Load Balancer
+- Greate for internal resources
+- Do not use for external resources eg Web Apps/ Web APIs
+- Does not route based on path
+- No Protection
+
+### Application Gateway
+- Web traffic load balancer - Load balancer with improved capabilities
+- Can function as the external endpoint of the web apps
+- It works with
+    - VMs
+    - VM Scale Sets
+    - App Services
+    - Kubernetes(with some hacking)
+- Similar to load balancer with additional Features
+    - SSL Termination
+    - Autoscaling
+    - Zone redundancy
+    - Session affinity
+    - URL based routing
+    - WebSocket and HTTP/2 support
+    - WAF
+    - Custom error pages
+
+### WAF
+- Web Application Firewall
+- Protects web apps against common attacks
+    - Cross site scripting, SQL Injection
+Protection rules based on OWASP core Rule set
+- Updates Continuously
+- Works in Detection or Prevention Mode
+- Many organization have their own WAF such as (Imperva, Fortinet)
+- In these cases - there's no need for WAF in the application gateway
+
+### Application Gateway SKUs
+- Standard_V2 - includes all the features mentioned including WAF
+- WAF_V2 - includes everything(almost double in price)
+
+### Application Gateway Subnet
+- Application Gateway is placed on its own subnet
+- Often on its own VNet
+- Must make sure backend resources are:
+    - Accessible from application gateway subnet
+    - Not accessible from anywhere
+
+### 5 Application Gateway Configuration
+- HTTP Settings
+    - Set the HTTP incoming requests
+- Backend Pool
+    - VMs, Scale Sets and App Service that are connected to the load balancer
+- Listeners
+    - Receives requests on a specific port and protocol
+- Load Balancing rules
+    - Rules connecting the frontend IP to the backend pools
+
+``` Practical video start at 29```
